@@ -9,15 +9,18 @@ jobs:
     working_directory: ~/app
 
     steps:
-
-      - restore_cache # Restore any cached dependencies.
+      - restore_cache:
+          key: v1-{{ checksum "yarn.lock" }}
       - run: yarn install 
       - run: yarn lint 
       - run: yarn format:check
       - run: yarn test
       - run: yarn test:cov
       - run: yarn test:e2e
-      - save_cache # Save the dependencies to be cached for future builds.
+      - save_cache:
+          paths:
+            - v1-{{ checksum "yarn.lock" }}
+          key: node_modules/
 
   deploy_stage:
     # Use a Kubernetes image for the job.
