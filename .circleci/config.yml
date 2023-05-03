@@ -9,7 +9,7 @@ jobs:
     working_directory: ~/app
 
     steps:
-      - checkout # Check out the code from the repository.
+
       - restore_cache # Restore any cached dependencies.
       - run: yarn install 
       - run: yarn lint 
