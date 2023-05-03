@@ -1,0 +1,63 @@
+# .circleci/config.yml
+
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:16.0
+    working_directory: ~/app
+
+    steps:
+      - checkout # Check out the code from the repository.
+      - restore_cache # Restore any cached dependencies.
+      - run: yarn install 
+      - run: yarn lint 
+      - run: yarn format:check
+      - run: yarn test
+      - run: yarn test:cov
+      - run: yarn test:e2e
+      - save_cache # Save the dependencies to be cached for future builds.
+
+  deploy_stage:
+    # Use a Kubernetes image for the job.
+    docker:
+      - image: docker:19.03.12
+    working_directory: ~/app
+
+    # Define the environment variables required for deployment.
+    environment:
+      KUBECONFIG: /tmp/kubeconfig
+      NAMESPACE: stage
+
+    # Define the steps to run in the job.
+    steps:
+      - checkout # Check out the code from the repository.
+      - setup_remote_docker # Set up Docker to push the image.
+      - run: echo "$KUBECONFIG_BASE64" | base64 --decode > /tmp/kubeconfig # Decode the Kubernetes config.
+      - run: docker build -t my-image:latest . # Build the Docker image.
+      - run: docker tag my-image:latest my-registry/my-image:latest # Tag the image with the registry.
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS my-registry # Log in to the registry.
+      - run: docker push my-registry/my-image:latest # Push the image to the registry.
+      - run: kubectl apply -f kubernetes/stage.yaml # Deploy the application to the stage namespace.
+      - run: echo "Deployment successful! Check the application at https://stage.my-domain.com."
+
+  deploy_production:
+    # Use a Kubernetes image for the job.
+    docker:
+      - image: docker:19.03.12
+    working_directory: ~/app
+
+    # Define the environment variables required for deployment.
+    environment:
+      KUBECONFIG: /tmp/kubeconfig
+      NAMESPACE: production
+
+    # Define the steps to run in the job.
+    steps:
+      - checkout # Check out the code from the repository.
+      - setup_remote_docker # Set up Docker to push the image.
+      - run: echo "$KUBECONFIG_BASE64" | base64 --decode > /tmp/kubeconfig # Decode the Kubernetes config.
+      - run: docker build -t my-image:latest . # Build the Docker image.
+      - run: docker tag my-image:latest my-registry/my-image:latest # Tag the image with the registry.
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS my-registry # Log in to the
