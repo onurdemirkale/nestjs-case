@@ -4,6 +4,7 @@ version: 2.1
 
 tests_template: &tests_template
   steps:
+    - checkout
     - run: yarn lint
     - run: yarn format:check
     - run: yarn test
