@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: staging-app
+  labels:
+    app: myapp
+spec:
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      imagePullSecrets:
+        # ... as necessary
+      containers:
+      - name: staging-app
+        image: gcr.io/... # (this will be over-written by the CircleCI deployment script)
+        resources: # ... as necessary
+        env: # ... as necessary
