@@ -3,7 +3,6 @@
 version: 2.1
 
 tests_template: &tests_template
-  working_directory: ~/app
   steps:
     - run: yarn lint
     - run: yarn format:check
@@ -26,12 +25,10 @@ jobs:
           paths:
             - v1-{{ checksum "yarn.lock" }}
           key: ./node_modules
-
   test_node_14:
     <<: *tests_template
     docker:
       - image: circleci/node:14
-
   test_node_16:
     <<: *tests_template
     docker:
