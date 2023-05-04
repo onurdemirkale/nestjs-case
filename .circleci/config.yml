@@ -32,9 +32,9 @@ tests_template: &tests_template
     - run: yarn test:cov
     - run: yarn test:e2e
     - save_cache:
+        key: v1-{{ checksum "yarn.lock" }}
         paths:
-          - v1-{{ checksum "yarn.lock" }}
-        key: ./node_modules
+          - ./node_modules
 
 # build_template: &build
 
@@ -53,9 +53,9 @@ jobs:
       - run: yarn test:cov
       - run: yarn test:e2e
       - save_cache:
+          key: v1-{{ checksum "yarn.lock" }}
           paths:
-            - v1-{{ checksum "yarn.lock" }}
-          key: ./node_modules
+            - ./node_modules
 
   # build_node_14:
   #   <<: *build_template
