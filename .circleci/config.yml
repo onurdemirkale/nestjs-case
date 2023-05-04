@@ -2,6 +2,22 @@
 
 version: 2.1
 
+# aliases:
+#   - &install_dependencies
+#     run:
+#       command:
+
+# : &dependency_template
+#   steps:
+#     - checkout
+#     - restore_cache:
+#         key: v1-{{ checksum "yarn.lock" }}
+#     - run: yarn install
+#     - save_cache:
+#         paths:
+#           - v1-{{ checksum "yarn.lock" }}
+#         key: ./node_modules
+
 tests_template: &tests_template
   steps:
     - checkout
@@ -22,14 +38,31 @@ jobs:
       - restore_cache:
           key: v1-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: yarn lint
+      - run: yarn format:check
+      - run: yarn test
+      - run: yarn test:cov
+      - run: yarn test:e2e
       - save_cache:
           paths:
             - v1-{{ checksum "yarn.lock" }}
           key: ./node_modules
+
+  # build_node_14:
+  #   <<: *build_template
+  #   docker:
+  #     - image: circleci/node:14
+
+  # build_node_16:
+  #   <<: *build_template
+  #   docker:
+  #     - image: circleci/node:16
+
   test_node_14:
     <<: *tests_template
     docker:
       - image: circleci/node:14
+
   test_node_16:
     <<: *tests_template
     docker:
@@ -40,12 +73,12 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test_node_14:
-          requires:
-            - build
-      - test_node_14:
-          requires:
-            - build
+      # - test_node_14:
+      #     requires:
+      #       - build
+      # - test_node_14:
+      #     requires:
+      #       - build
 # jobs:
 #   build_and_test:
 # jobs:
