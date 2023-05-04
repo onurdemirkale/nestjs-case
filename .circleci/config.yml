@@ -2,6 +2,8 @@
 
 version: 2.1
 
+# make an alias for caching
+
 # aliases:
 #   - &install_dependencies
 #     run:
@@ -21,11 +23,18 @@ version: 2.1
 tests_template: &tests_template
   steps:
     - checkout
+    - restore_cache:
+        key: v1-{{ checksum "yarn.lock" }}
+    - run: yarn install
     - run: yarn lint
     - run: yarn format:check
     - run: yarn test
     - run: yarn test:cov
     - run: yarn test:e2e
+    - save_cache:
+        paths:
+          - v1-{{ checksum "yarn.lock" }}
+        key: ./node_modules
 
 # build_template: &build
 
@@ -72,13 +81,12 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
-      # - test_node_14:
-      #     requires:
-      #       - build
-      # - test_node_14:
-      #     requires:
-      #       - build
+      - test_node_14:
+          requires:
+            - build
+      - test_node_14:
+          requires:
+            - build
 # jobs:
 #   build_and_test:
 # jobs:
