@@ -21,7 +21,7 @@ jobs:
       - checkout
       - restore_cache:
           key: v1-{{ checksum "yarn.lock" }}
-      - yarn
+      - run: yarn install
       - save_cache:
           paths:
             - v1-{{ checksum "yarn.lock" }}
