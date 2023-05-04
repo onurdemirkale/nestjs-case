@@ -27,15 +27,15 @@ jobs:
             - v1-{{ checksum "yarn.lock" }}
           key: ./node_modules
 
-    test_node_14:
-      <<: *tests_template
-      docker:
-        - image: circleci/node:14
+  test_node_14:
+    <<: *tests_template
+    docker:
+      - image: circleci/node:14
 
-    test_node_16:
-      <<: *tests_template
-      docker:
-        - image: circleci/node:16
+  test_node_16:
+    <<: *tests_template
+    docker:
+      - image: circleci/node:16
 # jobs:
 #   build_and_test:
 # jobs:
