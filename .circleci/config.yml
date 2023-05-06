@@ -59,13 +59,12 @@ jobs:
           name: Build image
           command: |
             docker build --rm=false \
-            -t gcr.io/${GCR_PROJECT}/myapp:${CIRCLE_BRANCH} \
+            -t gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_BRANCH} \
             -f ./Dockerfile .
       - run:
           name: Push image
           command: |
-            docker push gcr.io/${GCR_PROJECT}/myapp:${CIRCLE_SHA1}
-            docker push gcr.io/${GCR_PROJECT}/myapp:${CIRCLE_BRANCH}
+            docker push gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_BRANCH}
 
   # kubernetes_deploy:
 
