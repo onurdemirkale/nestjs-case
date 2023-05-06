@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Authenticate with GCR
           command: |
-            echo "${GCR_ACCESS_KEY}" | docker login -u _json_key --password-stdin https://gcr.io
+            echo ${GCR_ACCESS_KEY} | docker login -u _json_key --password-stdin https://gcr.io
       - run:
           name: Build image
           command: |
@@ -75,4 +75,6 @@ workflows:
   build_and_test:
     jobs:
       - test_node_14
-      - docker_push
+      - docker_push:
+          requires:
+            - test_node_14
