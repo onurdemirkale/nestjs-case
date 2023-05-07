@@ -6,7 +6,12 @@ workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test_node_12
+      - test_node_12:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
       - docker_push:
           requires:
             - test_node_12
@@ -66,11 +71,6 @@ jobs:
     <<: *tests_template
     docker:
       - image: circleci/node:14
-
-  test_node_16:
-    <<: *tests_template
-    docker:
-      - image: circleci/node:16
 
   # build and push Docker image to GCR
   docker_push:
