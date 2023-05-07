@@ -2,6 +2,8 @@
 
 version: 2.1
 
+# test
+
 # workflows are triggered when new commits are added to develop or master branch,
 # assuming that branches are protected against direct commits
 workflows:
