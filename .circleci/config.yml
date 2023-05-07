@@ -93,7 +93,7 @@ jobs:
             elif [ ${CIRCLE_BRANCH} == "master" ]; then
                 NAMESPACE="production"
             else
-                echo "Unknown branch: ${CIRCLE_BRANCH}
+                echo "Unknown branch: ${CIRCLE_BRANCH}"
                 exit 1
             fi
       - run:
