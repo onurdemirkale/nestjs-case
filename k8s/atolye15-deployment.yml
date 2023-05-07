@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: atolye15-deployment
+  name: atolye15
   labels:
     app: atolye15
 spec:
