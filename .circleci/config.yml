@@ -80,15 +80,15 @@ jobs:
             gcloud components install kubectl
             echo "${GKE_SERVICE_ACCOUNT_KEY}" > .key.json
             gcloud auth activate-service-account --key-file .key.json
-            gcloud config set compute/zone "${GKE_ZONE}"
-            gcloud config set project "${GKE_PROJECT}"
-            gcloud container clusters get-credentials "${GKE_CLUSTER}" --zone "${GKE_ZONE}"
-            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            gcloud config set compute/zone ${GKE_ZONE}
+            gcloud config set project ${GKE_PROJECT}
+            gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
+            if [ ${CIRCLE_BRANCH} == "develop" ]; then
                 NAMESPACE="staging"
-            elif [ "${CIRCLE_BRANCH}" == "master" ]; then
+            elif [ ${CIRCLE_BRANCH} == "master" ]; then
                 NAMESPACE="production"
             else
-                echo "Unknown branch: ${CIRCLE_BRANCH}"
+                echo "Unknown branch: ${CIRCLE_BRANCH}
                 exit 1
             fi
             kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest -n ${NAMESPACE}
