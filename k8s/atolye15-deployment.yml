@@ -1,19 +1,20 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: staging-app
+  name: atolye15-deployment
   labels:
-    app: myapp
+    app: atolye15
 spec:
+  selector:
+    matchLabels:
+      app: atolye15
   template:
     metadata:
       labels:
-        app: myapp
+        app: atolye15
     spec:
-      imagePullSecrets:
-        # ... as necessary
       containers:
-      - name: staging-app
-        image: gcr.io/... # (this will be over-written by the CircleCI deployment script)
-        resources: # ... as necessary
-        env: # ... as necessary
+        - name: atolye15
+          image: gcr.io/centering-land-385713/atolye15:master
+          ports:
+            - containerPort: 3000

@@ -44,35 +44,60 @@ jobs:
     docker:
       - image: circleci/node:16
 
+  test_node_20:
+    <<: *tests_template
+    docker:
+      - image: circleci/node:20
+
   docker_push:
     docker:
       - image: cimg/base:2023.05 # Circle CI Base Docker image
-
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: Authenticate with GCR
           command: |
-            echo ${GCLOUD_ACCESS_KEY} | docker login -u _json_key --password-stdin https://gcr.io
+            echo ${GCR_SERVICE_ACCOUNT_KEY} | docker login -u _json_key --password-stdin https://gcr.io
       - run:
           name: Build image
           command: |
             docker build --rm=false \
-            -t gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_BRANCH} \
+            -t gcr.io/${GCR_PROJECT}/atolye15:latest \
             -f ./Dockerfile .
       - run:
           name: Push image
           command: |
-            docker push gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_BRANCH}
+            docker push gcr.io/${GCR_PROJECT}/atolye15:latest
 
-  # kubernetes_deploy:
+  kubernetes_deploy:
+    docker:
+      - image: google/cloud-sdk:alpine
+    steps:
+      - run:
+          name: Deploy the current commit on this branch to the GKE cluster
+          command: |
+            gcloud components install kubectl
+            echo "${GKE_SERVICE_ACCOUNT_KEY}" > .key.json
+            gcloud auth activate-service-account --key-file .key.json
+            gcloud config set compute/zone "${GKE_ZONE}"
+            gcloud config set project "${GKE_PROJECT}"
+            gcloud container clusters get-credentials "${GKE_CLUSTER}" --zone "${GKE_ZONE}"
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+                NAMESPACE="staging"
+            elif [ "${CIRCLE_BRANCH}" == "master" ]; then
+                NAMESPACE="production"
+            else
+                echo "Unknown branch: ${CIRCLE_BRANCH}"
+                exit 1
+            fi
+            kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest -n ${NAMESPACE}
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - test_node_14
+      - test_node_20
       - docker_push:
           requires:
-            - test_node_14
+            - test_node_20
