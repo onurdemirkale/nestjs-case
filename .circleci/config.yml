@@ -117,6 +117,10 @@ jobs:
                 exit 1
             fi
       - run:
+          name: Debug namespace
+          command: echo "hello world"
+      - run: echo "hello world"
+      - run:
           name: Update deployment image
           command: |
             kubectl set image deployment/atolye15 \
