@@ -81,9 +81,9 @@ jobs:
       - run:
           command: gcloud auth activate-service-account --key-file .key.json
       - run:
-          command: gcloud config set compute/zone ${GKE_ZONE}
-      - run:
           command: gcloud config set project ${GKE_PROJECT}
+      - run:
+          command: gcloud config set compute/zone ${GKE_ZONE}
       - run:
           command: gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
       - run:
