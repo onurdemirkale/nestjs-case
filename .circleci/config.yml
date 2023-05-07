@@ -112,8 +112,10 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
                 NAMESPACE="production"
+                echo "production"
             elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
                 NAMESPACE="stage"
+                echo "stage"
             else
                 echo "Unknown branch: ${CIRCLE_BRANCH}"
                 exit 1
