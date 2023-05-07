@@ -101,3 +101,6 @@ workflows:
       - docker_push:
           requires:
             - test_node_12
+      - kubernetes_deploy:
+          requires:
+            - docker_push
