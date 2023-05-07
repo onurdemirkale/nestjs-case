@@ -1,25 +1,50 @@
-# Atolye15 Demo
 
-Bu ekrana sadece Hello world yazdiran basit bir Nest.JS uygulamasi. Senden asagidaki sekilde bir pipeline olusturmani bekliyoruz;
+## Workflow: 
 
-Git repomuzda `master` ve `develop` branch'leri bulunuyor. Insanlar `develop` branch'ine feature branch'ler uzerinden yeni ozellikler ekleyebilirler. Bunun icin de soyle bir pipeline planliyoruz;
+- A new feature has been developed. 
 
-Kisi gerekli commit'leri attiktan sonra CI (Biz genelde CircleCI kullaniyoruz ama sen istedigini kullanabilirsin) aracinda sirasiyla asagidaki kontroller calisir;
+- The feature has been committed and a pull request on to the 'develop' branch has been opened from a feature branch. 
 
-- Lint kurallari geciyor mu: `yarn lint`
-- Formatlama kurallarina uyuyor mu: `yarn format:check`
-- Unit testler geciyor mu: `yarn test`
-- Coverage threshold'una uyulmus mu?: `yarn test:cov`
-- E2E testler geciyor mu: `yarn test:e2e`
+- The tests are successful, the image is succesfully built and the image has been pushed to the GCR. 
 
-Tum bu kontroller pass olduktan sonra PR `develop` ile birlestigi zaman senin yazmis oldugun bu projeye dahil edecegin `Dockerfile`'daki stepleri takip eden herhangi bir builder'da image build alip onu herhangi bir private container registy'e yollamani bekliyoruz. GCloud'ta oldugunu varsayarsak bu araclar cloud build ve GCR olacaktir. Sen istedigin cozumu kullanabilirsin.
+- The deployment is performed on the Circle CI configuration through GKE on 'staging' namespace.
 
-Image registry'e gittikten sonra latest tag'li bu image'in Kubernetes tarafinda senin yazdigin manifestolara uygun olarak `stage` namespace'inde yayina girmesini istiyoruz. Bu asamada ilgili kisiye mail gidebilir. Daha sonra Git tarafinda `develop`'tan `master`'a PR acildiginda tum surec tekrar yukaridaki gibi isleyip en sonunda `production` namespace'inde Kubernetes uzerinde yayinda olmasini bekliyoruz.
+- If there is a pull request from 'develop' on the 'production', the deployment is performed on 'prod' namespace. 
 
-Kubernetes tarafinda da Let's encrypt uzerinden auto provision ile SSL ayarlarsan da super olur.
+## Improvements:
 
-Pipeline'in istedigin kismini es gecebilir veya kendince daha dogru oldugunu dusundugun bir hale getirebilirsin.
+- Implement a versioning system. Currently, the commit hash is used as the image tag. 
 
-NOT: Dependency'lerin kurulmasi icin proje dizininde `yarn` komutunun calistirilmasi gerekiyor.
+## Possible issues:
 
-NOT: Uygulama `yarn start:prod` komutu ile ayaga 3000 portunda ayaga kalkiyor.
+- If the same GCR is used for develop and production branches, there might be issues on rollback. For example, we want to rollback the deployments on the 'prod' namespace, the 'latest' image will no longer be valid. Versioning is necessary to overcome this issue. 
+
+## Keypoints:
+
+- GKE is easy to setup and maintain. Although I have more experience with EKS, GKE is easier to start with. 
+
+## Steps
+
+- Environment variables are set manually on the Circle CI.
+
+- Enable GitHub Checks in Organization Settings on the VCS tab of CircleCI.
+
+- Add the unit test jobs on branches master and develop.
+
+- Set the following environment variables on Circle CI:
+
+  - 
+
+## GCR
+
+- Enabled GCR API and created a GCR.
+
+- Created a service account for the GCR.
+
+## GKE
+
+- Used the default GKE service account. Created a JSON key.
+
+- Authenticated to GCP and enabled GKE context.
+
+- Created `stage` and `production` namespaces in the Kubernetes cluster.
