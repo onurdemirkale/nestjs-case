@@ -6,14 +6,14 @@ version: 2.1
 # assuming that branches are protected against direct commits
 workflows:
   version: 2
-test:
-  jobs:
-    - test_node_12:
-        filters:
-          branches:
-            ignore:
-              - develop
-              - master
+  test:
+    jobs:
+      - test_node_12:
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
   build_and_deploy:
     jobs:
       - docker_push:
