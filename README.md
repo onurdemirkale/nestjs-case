@@ -1,50 +1,64 @@
 
-## Workflow: 
-
-- A new feature has been developed. 
-
-- The feature has been committed and a pull request on to the 'develop' branch has been opened from a feature branch. 
-
-- The tests are successful, the image is succesfully built and the image has been pushed to the GCR. 
-
-- The deployment is performed on the Circle CI configuration through GKE on 'staging' namespace.
-
-- If there is a pull request from 'develop' on the 'production', the deployment is performed on 'prod' namespace. 
-
-## Improvements:
+# Improvements:
 
 - Implement a versioning system. Currently, the commit hash is used as the image tag. 
 
-## Possible issues:
+# Issues:
 
 - If the same GCR is used for develop and production branches, there might be issues on rollback. For example, we want to rollback the deployments on the 'prod' namespace, the 'latest' image will no longer be valid. Versioning is necessary to overcome this issue. 
 
-## Keypoints:
+# Followed Steps:
 
-- GKE is easy to setup and maintain. Although I have more experience with EKS, GKE is easier to start with. 
+## Infrastructure
 
-## Steps
+### GKE
 
-- Environment variables are set manually on the Circle CI.
+- Created a Kubernetes cluster using GKE. Set Kubernetes context to the GKE cluster. 
+
+- Created `stage` and `production` namespaces in the Kubernetes cluster.
+
+- Used the default GKE service account to create a JSON key for authentication.
+
+- Uploded the JSON key to Circle CI environment variables to be accessed during the deployment process.
+
+### GCR
+
+- Enabled GCR API and created a GCR. 
+
+- Created a service account for the GCR. Obtained a JSON key for authentication.
+
+- Uploded the JSON key to Circle CI environment variables to be accessed during the repository push process.
+
+### Circle CI
 
 - Enable GitHub Checks in Organization Settings on the VCS tab of CircleCI.
 
+- Create the Circle CI configuration document.
+
+### GitHub
+
+- Edit branch protection rules for `master` and `develop` and require the `test_node_12` job as a status check. This allows to run unit tests before a branch can be merged.
+
+# Configuration: 
+
+## Github
+
 - Add the unit test jobs on branches master and develop.
 
-- Set the following environment variables on Circle CI:
+## Circle CI Environment Variables:
 
-  - 
+Set the following environment variables in your CircleCI project settings:
 
-## GCR
+`CIRCLE_BRANCH`: This environment variable is automatically set by CircleCI and contains the name of the Git branch being built.
 
-- Enabled GCR API and created a GCR.
+`GCR_PROJECT`: This variable should contain the Google Cloud project ID where the Google Container Registry (GCR) is hosted.
 
-- Created a service account for the GCR.
+`GCR_SERVICE_ACCOUNT_KEY`: This variable should contain the JSON key for the Google Cloud service account that has access to your Google Container Registry (GCR). The key is used to authenticate with GCR for pushing Docker images.
 
-## GKE
+`GKE_SERVICE_ACCOUNT_KEY`: This variable should contain the JSON key for the Google Cloud service account that has access to your Google Kubernetes Engine (GKE) cluster. The key is used to authenticate with GKE for deploying your application.
 
-- Used the default GKE service account. Created a JSON key.
+`GKE_PROJECT`: This variable should contain the Google Cloud project ID where your Google Kubernetes Engine (GKE) cluster is hosted.
 
-- Authenticated to GCP and enabled GKE context.
+`GKE_ZONE`: This variable should contain the Google Cloud zone where your Google Kubernetes Engine (GKE) cluster is located.
 
-- Created `stage` and `production` namespaces in the Kubernetes cluster.
+`GKE_CLUSTER`: This variable should contain the name of your Google Kubernetes Engine (GKE) cluster.
