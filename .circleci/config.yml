@@ -75,18 +75,16 @@ jobs:
       - image: google/cloud-sdk:alpine
     steps:
       - run:
-          command: gcloud components install kubectl
+          name: Install kubectl and authenticate with GCP
+          command: |
+            gcloud components install kubectl
+            echo "${GKE_SERVICE_ACCOUNT_KEY}" > .key.json
+            gcloud auth activate-service-account --key-file .key.json
+            gcloud config set project ${GKE_PROJECT}
+            gcloud config set compute/zone ${GKE_ZONE}
+            gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
       - run:
-          command: echo "${GKE_SERVICE_ACCOUNT_KEY}" > .key.json
-      - run:
-          command: gcloud auth activate-service-account --key-file .key.json
-      - run:
-          command: gcloud config set project ${GKE_PROJECT}
-      - run:
-          command: gcloud config set compute/zone ${GKE_ZONE}
-      - run:
-          command: gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
-      - run:
+          name: Deploy to GKE
           command: |
             if [ ${CIRCLE_BRANCH} == "develop" ]; then
                 NAMESPACE="stage"
@@ -96,10 +94,7 @@ jobs:
                 echo "Unknown branch: ${CIRCLE_BRANCH}"
                 exit 1
             fi
-      - run:
-          command: echo $NAMESPACE
-      - run:
-          command: kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest --namespace=$NAMESPACE
+            kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest --namespace=$NAMESPACE
 
 workflows:
   version: 2
