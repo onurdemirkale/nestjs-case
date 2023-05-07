@@ -97,7 +97,9 @@ jobs:
                 exit 1
             fi
       - run:
-          command: kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest --namespace=${NAMESPACE}
+          command: echo $NAMESPACE
+      - run:
+          command: kubectl set image deployment/atolye15 atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest --namespace=$NAMESPACE
 
 workflows:
   version: 2
