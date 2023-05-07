@@ -16,5 +16,6 @@ spec:
       containers:
         - name: atolye15
           image: gcr.io/centering-land-385713/atolye15:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
