@@ -89,7 +89,7 @@ jobs:
       - run:
           command: |
             if [ ${CIRCLE_BRANCH} == "develop" ]; then
-                NAMESPACE="staging"
+                NAMESPACE="stage"
             elif [ ${CIRCLE_BRANCH} == "master" ]; then
                 NAMESPACE="production"
             else
