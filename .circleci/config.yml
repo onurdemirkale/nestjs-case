@@ -62,6 +62,8 @@ jobs:
     docker:
       - image: circleci/node:16
 
+  # create a job that updates the master GCR image with develop GCR image on pull request
+
   # build and push Docker image to GCR
   docker_push:
     docker:
@@ -117,9 +119,10 @@ jobs:
                 exit 1
             fi
       - run:
-          name: Debug namespace
-          command: echo ${NAMESPACE}
-      - run: echo $NAMESPACE
+          name: Debug deployments
+          command: |
+            echo "NAMESPACE: ${NAMESPACE}"
+            kubectl get deployments --all-namespaces
       - run:
           name: Update deployment image
           command: |
