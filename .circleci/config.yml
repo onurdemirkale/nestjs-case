@@ -10,9 +10,19 @@ workflows:
       - docker_push:
           requires:
             - test_node_12
+          filters:
+            branches:
+              only:
+                - develop
+                - master
       - kubernetes_deploy:
           requires:
-            - docker_push
+            - docker_push\
+          filters:
+            branches:
+              only:
+                - develop
+                - master
 
 aliases:
   - &save_cache
@@ -109,6 +119,7 @@ jobs:
             gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
       - run:
           name: Set namespace
+          # write NAMESPACE into BASH_ENV to make it accessible in subsequent steps
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
                 echo 'export NAMESPACE="production"' >> $BASH_ENV
