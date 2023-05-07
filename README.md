@@ -3,9 +3,7 @@
 
 - Implement a versioning system. Currently, the commit hash is used as the image tag. 
 
-# Issues:
-
-- If the same GCR is used for develop and production branches, there might be issues on rollback. For example, we want to rollback the deployments on the 'prod' namespace, the 'latest' image will no longer be valid. Versioning is necessary to overcome this issue. 
+- The workflows are triggered when a pull request is opened. Only the `test_node_x` status check should be triggered when a pull request is opened. The main workflow (build and deploy) should only be triggered when a pull request is merged.
 
 # Followed Steps:
 
@@ -35,9 +33,17 @@
 
 - Create the Circle CI configuration document.
 
+### Dockerfile
+
+- Implemented a Dockerfile for building the Nest.js application.
+
+### K8S
+
+- Created a deployment manifest.
+
 ### GitHub
 
-- Edit branch protection rules for `master` and `develop` and require the `test_node_12` job as a status check. This allows to run unit tests before a branch can be merged.
+- Edited branch protection rules for `master` and `develop` and require the `test_node_12` job as a status check. This allows to run unit tests before a branch can be merged.
 
 # Configuration: 
 
