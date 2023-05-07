@@ -118,8 +118,8 @@ jobs:
             fi
       - run:
           name: Debug namespace
-          command: echo "hello world"
-      - run: echo "hello world"
+          command: echo ${NAMESPACE}
+      - run: echo $NAMESPACE
       - run:
           name: Update deployment image
           command: |
