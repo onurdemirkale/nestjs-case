@@ -80,12 +80,12 @@ jobs:
           name: Build Docker image
           command: |
             docker build --rm=false \
-            -t gcr.io/${GCR_PROJECT}/atolye15:latest \
+            -t gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_SHA1} \
             -f ./Dockerfile .
       - run:
           name: Push image to GCR
           command: |
-            docker push gcr.io/${GCR_PROJECT}/atolye15:latest
+            docker push gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_SHA1}
 
   # deploy the Docker image to GKE
   kubernetes_deploy:
@@ -122,4 +122,4 @@ jobs:
           name: Update deployment image
           command: |
             kubectl set image deployment/atolye15 \
-            atolye15=gcr.io/${GCR_PROJECT}/atolye15:latest --namespace=${NAMESPACE}
+            atolye15=gcr.io/${GCR_PROJECT}/atolye15:${CIRCLE_SHA1} --namespace=${NAMESPACE}
