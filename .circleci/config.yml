@@ -111,21 +111,13 @@ jobs:
           name: Set namespace
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                NAMESPACE="production"
-                echo "production"
+                echo 'export NAMESPACE="production"' >> $BASH_ENV
             elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
-                NAMESPACE="stage"
-                echo "stage"
+                echo 'export NAMESPACE="stage"' >> $BASH_ENV
             else
                 echo "Unknown branch: ${CIRCLE_BRANCH}"
                 exit 1
             fi
-      - run:
-          name: Debug deployments
-          command: |
-            echo "NAMESPACE: ${NAMESPACE}"
-            echo "CIRCLE_BRANCH: ${CIRCLE_BRANCH}"
-            kubectl get deployments --all-namespaces
       - run:
           name: Update deployment image
           command: |
