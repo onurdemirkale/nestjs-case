@@ -72,8 +72,6 @@ jobs:
     docker:
       - image: circleci/node:16
 
-  # create a job that updates the master GCR image with develop GCR image on pull request
-
   # build and push Docker image to GCR
   docker_push:
     docker:
