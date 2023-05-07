@@ -111,11 +111,11 @@ jobs:
           name: Set namespace
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                DEPLOYMENT_PREFIX="production"
+                NAMESPACE="production"
             elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
-                DEPLOYMENT_PREFIX="stage"
+                NAMESPACE="stage"
             else
-                echo "unknown branch ${CIRCLE_BRANCH}"
+                echo "Unknown branch: ${CIRCLE_BRANCH}"
                 exit 1
             fi
       - run:
